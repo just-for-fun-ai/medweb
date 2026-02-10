@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MedWeb Hospital Portal</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <h1>MedWeb Hospital Portal</h1>
+          <p class="subtitle">Secure collaboration for doctors, nurses, and patients</p>
+        </div>
+        <div class="topbar-actions" id="topbarActions"></div>
+      </header>
+
+      <main>
+        <section class="card" id="loginCard">
+          <h2>Sign in</h2>
+          <p>Select your role and login with one of the demo users.</p>
+          <form id="loginForm" class="form-grid">
+            <label>
+              Role
+              <select id="role" required>
+                <option value="">Choose role</option>
+                <option value="doctor">Doctor</option>
+                <option value="nurse">Nurse</option>
+                <option value="patient">Patient</option>
+              </select>
+            </label>
+            <label>
+              Username
+              <input id="username" type="text" placeholder="e.g. dr.smith" required />
+            </label>
+            <label>
+              Password
+              <input id="password" type="password" placeholder="Password" required />
+            </label>
+            <button type="submit" class="btn-primary">Login</button>
+          </form>
+
+          <details>
+            <summary>Demo credentials</summary>
+            <ul class="credentials-list">
+              <li><strong>Doctor:</strong> dr.smith / Health@123</li>
+              <li><strong>Nurse:</strong> nurse.jane / Care@123</li>
+              <li><strong>Patient:</strong> john.doe / Patient@123</li>
+            </ul>
+          </details>
+        </section>
+
+        <section class="card hidden" id="dashboardCard">
+          <div id="dashboardHeader"></div>
+          <div id="dashboardBody" class="dashboard-grid"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
