@@ -1,0 +1,15 @@
+{
+  "id": "./",
+  "name": "JV MedWeb Live Monitor",
+  "short_name": "JV MedWeb",
+  "description": "Real-time ESP32 vital monitoring dashboard",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f8fc",
+  "theme_color": "#147d78",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
