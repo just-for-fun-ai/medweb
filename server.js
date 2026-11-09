@@ -1,6 +1,6 @@
 require('dotenv').config();
 const http=require('http'),fs=require('fs'),path=require('path'),nodemailer=require('nodemailer');
-const root=__dirname,port=Number(process.env.PORT||8080),types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.md':'text/markdown; charset=utf-8'};
+const root=__dirname,port=Number(process.env.PORT||8080),types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.md':'text/markdown; charset=utf-8','.webmanifest':'application/manifest+json; charset=utf-8','.svg':'image/svg+xml'};
 const server=http.createServer(async(req,res)=>{
  if(req.method==='POST'&&req.url==='/api/alert'){
   let raw='';req.on('data',c=>{raw+=c;if(raw.length>10000)req.destroy()});
