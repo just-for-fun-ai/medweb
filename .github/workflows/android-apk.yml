@@ -1,0 +1,85 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "styles.css"
+      - "app.js"
+      - "install.js"
+      - "manifest.webmanifest"
+      - "icons/**"
+      - "capacitor.config.json"
+      - "package.json"
+      - "scripts/prepare-mobile.js"
+      - ".github/workflows/android-apk.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-apk
+  cancel-in-progress: false
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: "platform-tools platforms;android-36 build-tools;36.0.0"
+
+      - name: Install app dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Prepare bundled web app
+        run: |
+          npm run mobile:prepare
+          mkdir -p assets
+          cp icons/icon.svg assets/icon.svg
+
+      - name: Generate native Android project
+        run: |
+          npx cap add android
+          npx capacitor-assets generate --android
+          npx cap sync android
+
+      - name: Build signed debug APK
+        working-directory: android
+        run: ./gradlew --no-daemon assembleDebug
+
+      - name: Prepare release files
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk JV-MedWeb-Android-v1.0.0.apk
+          sha256sum JV-MedWeb-Android-v1.0.0.apk > JV-MedWeb-Android-v1.0.0.apk.sha256
+
+      - name: Publish APK on GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="medweb-android-v1.0.0"
+          title="JV MedWeb Android v1.0.0"
+          notes="Install the APK on Android. This is a debug-signed sideload build. Android may ask you to confirm installation from your browser. Verify the SHA-256 file before installing. Use only on a trusted Wi-Fi network when connecting to ESP32 devices over ws://."
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" JV-MedWeb-Android-v1.0.0.apk JV-MedWeb-Android-v1.0.0.apk.sha256 --clobber
+          else
+            gh release create "$tag" JV-MedWeb-Android-v1.0.0.apk JV-MedWeb-Android-v1.0.0.apk.sha256 --title "$title" --notes "$notes" --latest
+          fi
