@@ -1,0 +1,9 @@
+{
+  "appId": "com.justforfun.medweb",
+  "appName": "JV MedWeb",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  }
+}
