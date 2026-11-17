@@ -1,9 +1,7 @@
-const CACHE='jv-medweb-shell-v1';
+const CACHE='jv-medweb-shell-v2';
 const SHELL=['./','./index.html','./styles.css','./app.js','./install.js','./manifest.webmanifest','./icons/icon.svg'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
-self.addEventListener('fetch',event=>{
- const request=event.request;
- if(request.method!=='GET'||new URL(request.url).origin!==self.location.origin||new URL(request.url).pathname.endsWith('/api/alert'))return;
- event.respondWith(fetch(request).then(response=>{if(response.ok)caches.open(CACHE).then(cache=>cache.put(request,response.clone()));return response}).catch(()=>caches.match(request).then(cached=>cached||caches.match('./index.html'))));
-});
+self.addEventListener('push',event=>{let message={title:'MedWeb alert',body:'A new monitor alert is available.'};try{if(event.data)message={...message,...event.data.json()}}catch{}event.waitUntil(self.registration.showNotification(message.title,{body:message.body,icon:'./icons/icon.svg',badge:'./icons/icon.svg',tag:message.tag||'medweb-alert',data:{url:message.url||'./#alerts'}}))});
+self.addEventListener('notificationclick',event=>{event.notification.close();const target=new URL(event.notification.data?.url||'./#alerts',self.location.origin).href;event.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(windows=>{for(const client of windows){if(client.url.startsWith(self.location.origin)&&'focus'in client){client.navigate(target);return client.focus()}}return clients.openWindow(target)}))});
+self.addEventListener('fetch',event=>{const request=event.request;if(request.method!=='GET'||new URL(request.url).origin!==self.location.origin||new URL(request.url).pathname.endsWith('/api/alert'))return;event.respondWith(fetch(request).then(response=>{if(response.ok)caches.open(CACHE).then(cache=>cache.put(request,response.clone()));return response}).catch(()=>caches.match(request).then(cached=>cached||caches.match('./index.html'))))});
