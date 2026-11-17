@@ -249,7 +249,7 @@ for(const permission of permissions){
 fs.writeFileSync(manifestPath,manifest,'utf8');
 
 if(!main.includes('BluetoothTerminalPlugin.class')){
-  const updated=main.replace(/public class MainActivity extends BridgeActivity\\s*\\{\\s*\\}/,
+  const updated=main.replace(/public class MainActivity extends BridgeActivity\s*\{\s*\}/,
     'public class MainActivity extends BridgeActivity {\\n    @Override\\n    public void onCreate(android.os.Bundle savedInstanceState) {\\n        registerPlugin(BluetoothTerminalPlugin.class);\\n        super.onCreate(savedInstanceState);\\n    }\\n}');
   if(updated===main)throw new Error('Could not register the Bluetooth plugin in MainActivity');
   fs.writeFileSync(mainActivity,updated,'utf8');
