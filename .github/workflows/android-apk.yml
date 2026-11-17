@@ -2,7 +2,7 @@ name: Build Android APK
 
 on:
   push:
-    branches: [main]
+    branches: [main, feat/mobile-native-alerts-email]
     paths:
       - "index.html"
       - "styles.css"
