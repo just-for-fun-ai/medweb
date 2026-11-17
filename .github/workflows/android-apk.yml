@@ -13,6 +13,7 @@ on:
       - "capacitor.config.json"
       - "package.json"
       - "scripts/prepare-mobile.js"
+      - "scripts/patch-android-bluetooth.js"
       - ".github/workflows/android-apk.yml"
   workflow_dispatch:
 
@@ -58,6 +59,7 @@ jobs:
       - name: Generate native Android project
         run: |
           npx cap add android
+          node scripts/patch-android-bluetooth.js
           npx capacitor-assets generate --android
           npx cap sync android
 
@@ -67,18 +69,18 @@ jobs:
 
       - name: Prepare release files
         run: |
-          cp android/app/build/outputs/apk/debug/app-debug.apk JV-MedWeb-Android-v1.1.0.apk
-          sha256sum JV-MedWeb-Android-v1.1.0.apk > JV-MedWeb-Android-v1.1.0.apk.sha256
+          cp android/app/build/outputs/apk/debug/app-debug.apk JV-MedWeb-Android-v1.2.0.apk
+          sha256sum JV-MedWeb-Android-v1.2.0.apk > JV-MedWeb-Android-v1.2.0.apk.sha256
 
       - name: Publish APK on GitHub Releases
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="medweb-android-v1.1.0"
-          title="JV MedWeb Android v1.1.0"
+          tag="medweb-android-v1.2.0"
+          title="JV MedWeb Android v1.2.0"
           notes="Install the APK on Android. This is a debug-signed sideload build. Android may ask you to confirm installation from your browser. Verify the SHA-256 file before installing. Use only on a trusted Wi-Fi network when connecting to ESP32 devices over ws://."
           if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" JV-MedWeb-Android-v1.1.0.apk JV-MedWeb-Android-v1.1.0.apk.sha256 --clobber
+            gh release upload "$tag" JV-MedWeb-Android-v1.2.0.apk JV-MedWeb-Android-v1.2.0.apk.sha256 --clobber
           else
-            gh release create "$tag" JV-MedWeb-Android-v1.1.0.apk JV-MedWeb-Android-v1.1.0.apk.sha256 --title "$title" --notes "$notes" --latest
+            gh release create "$tag" JV-MedWeb-Android-v1.2.0.apk JV-MedWeb-Android-v1.2.0.apk.sha256 --title "$title" --notes "$notes" --latest
           fi
