@@ -1,8 +1,8 @@
 {
   "name": "jv-medweb-live",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
-  "description": "JV MedWeb live ESP32 monitor and Android app",
+  "description": "JV MedWeb live ESP32 monitor and Android app with BLE",
   "scripts": {
     "start": "node server.js",
     "mobile:prepare": "node scripts/prepare-mobile.js"
@@ -10,11 +10,13 @@
   "dependencies": {
     "@capacitor/android": "^8.6.0",
     "@capacitor/core": "^8.6.0",
+    "@capacitor-community/bluetooth-le": "^8.0.0",
     "dotenv": "^16.4.7",
     "nodemailer": "^6.10.0"
   },
   "devDependencies": {
     "@capacitor/assets": "^4.0.0",
-    "@capacitor/cli": "^8.6.0"
+    "@capacitor/cli": "^8.6.0",
+    "esbuild": "^0.25.0"
   }
 }
