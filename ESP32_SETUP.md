@@ -1,13 +1,16 @@
-# ESP32 live monitor setup
+# JV MedWeb BLE setup
 
-MedWeb connects to an ESP32 WebSocket endpoint on the same Wi-Fi network. Open Devices, enter the address (for example ws://192.168.1.42:81) and choose an editable display name. The device must send JSON at least once per second, with its real unique hardware ID and numeric readings:
+This branch changes MedWeb from Wi-Fi/WebSocket to Bluetooth Low Energy.
 
+**BLE UART service:** `6E400001-B5A3-F393-E0A9-E50E24DCCA9E`  
+**Notify characteristic (device → app):** `6E400003-B5A3-F393-E0A9-E50E24DCCA9E`
+
+Send JSON notifications like:
 ```json
-{"id":"AA:BB:CC:DD:EE:FF","heartRate":72,"spo2":98,"temperature":36.7,"gyro":{"x":0.02,"y":-0.01,"z":0.99}}
+{"id":"ESP32-01","heartRate":72,"spo2":98,"temperature":36.7,"gyro":{"x":0.02,"y":-0.01,"z":0.99}}
 ```
+The app scans, connects, subscribes to notifications and updates dashboard/threshold alerts.
 
-The app computes gyro magnitude from the three axes. It never creates sample devices or readings. A generic ESP32 cannot be discovered or read automatically: sensor wiring, libraries, calibration and WebSocket firmware vary by board. Install compatible firmware and connect sensors before using this monitor. Use a trusted local network; this demo WebSocket connection is unencrypted. Serve the UI over local HTTP because browser HTTPS pages block plain ws:// connections. Do not expose it to the public internet.
+**Compatibility:** Uses Web Bluetooth. Android Chrome supports it; availability in Capacitor Android WebView may vary. If BLE scanning fails in the APK, a native Capacitor BLE plugin integration is needed. Test this branch in Android Chrome first.
 
-## Email alerts
-
-Run `npm install`, copy `.env.example` to `.env`, then set SMTP credentials for a real mailbox/provider that you control and run `npm start`. Configure the recipient in Settings. Never commit `.env`. SMTP setup cannot create a mailbox; sign up with an email provider separately.
+BLE is short range. It cannot provide remote push alerts outside Bluetooth range. Remote notifications/email require internet-connected backend infrastructure.
