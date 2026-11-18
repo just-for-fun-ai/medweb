@@ -7,12 +7,14 @@ on:
       - "index.html"
       - "styles.css"
       - "app.js"
+      - "ble.js"
       - "install.js"
       - "manifest.webmanifest"
       - "icons/**"
       - "capacitor.config.json"
       - "package.json"
       - "scripts/prepare-mobile.js"
+      - "ESP32_SETUP.md"
       - ".github/workflows/android-apk.yml"
   workflow_dispatch:
 
@@ -67,18 +69,18 @@ jobs:
 
       - name: Prepare release files
         run: |
-          cp android/app/build/outputs/apk/debug/app-debug.apk JV-MedWeb-Android-v1.0.0.apk
-          sha256sum JV-MedWeb-Android-v1.0.0.apk > JV-MedWeb-Android-v1.0.0.apk.sha256
+          cp android/app/build/outputs/apk/debug/app-debug.apk JV-MedWeb-Android-v1.1.0.apk
+          sha256sum JV-MedWeb-Android-v1.1.0.apk > JV-MedWeb-Android-v1.1.0.apk.sha256
 
       - name: Publish APK on GitHub Releases
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="medweb-android-v1.0.0"
-          title="JV MedWeb Android v1.0.0"
-          notes="Install the APK on Android. This is a debug-signed sideload build. Android may ask you to confirm installation from your browser. Verify the SHA-256 file before installing. Use only on a trusted Wi-Fi network when connecting to ESP32 devices over ws://."
+          tag="medweb-android-v1.1.0"
+          title="JV MedWeb Android v1.1.0 — BLE"
+          notes="BLE direct connection to nearby compatible ESP32 monitors added. Wi-Fi WebSocket remains as legacy fallback. Debug-signed sideload APK; verify SHA-256 before installation. Not for clinical use."
           if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" JV-MedWeb-Android-v1.0.0.apk JV-MedWeb-Android-v1.0.0.apk.sha256 --clobber
+            gh release upload "$tag" JV-MedWeb-Android-v1.1.0.apk JV-MedWeb-Android-v1.1.0.apk.sha256 --clobber
           else
-            gh release create "$tag" JV-MedWeb-Android-v1.0.0.apk JV-MedWeb-Android-v1.0.0.apk.sha256 --title "$title" --notes "$notes" --latest
+            gh release create "$tag" JV-MedWeb-Android-v1.1.0.apk JV-MedWeb-Android-v1.1.0.apk.sha256 --title "$title" --notes "$notes" --latest
           fi
